@@ -1,0 +1,11 @@
+{
+    "Description" : "AI ML cluster",
+    "Resources" : {
+        "ECSClusterExample1" : {
+            "Type" : "AWS::ECS::Cluster",
+            "Properties" : {
+                "ClusterName" : "ecs-cluster-ai-ml"
+            }
+        }
+    }
+}

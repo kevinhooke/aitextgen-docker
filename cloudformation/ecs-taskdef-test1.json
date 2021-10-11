@@ -1,0 +1,81 @@
+{
+    "Description": "ECS TaskDef test1",
+    "Resources": {
+        "ECSTaskExecutionRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "ecs-tasks.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "ECSTaskExecutionPolicy",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Resource": "arn:aws:logs:us-west-2:*:log-group:*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "ECSTaskLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+                "LogGroupName": "ecs-test1-loggroup",
+                "RetentionInDays": 7
+            }
+        },
+        "ECSTest1TaskDef": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties": {
+                "Family": "ecs-test1-family",
+                "executionRoleArn": {
+                    "Ref": "ECSTaskExecutionRole"
+                },
+                "NetworkMode": "awsvpc",
+                "ContainerDefinitions": [
+                    {
+                        "name": "test1",
+                        "image": "amazonlinux",
+                        "essential": true,
+                        "logConfiguration": {
+                            "logDriver": "awslogs",
+                            "options": {
+                                "awslogs-group": "ecs-test1-loggroup",
+                                "awslogs-region": "us-west-2",
+                                "awslogs-stream-prefix": "ecs-test1"
+                            }
+                        },
+                        "Command": [
+                            "echo 'hello from ECS Fargate'"
+                        ]
+                    }
+                ],
+                "RequiresCompatibilities": [
+                    "FARGATE"
+                ],
+                "Cpu": "256",
+                "Memory": "512"
+            }
+        }
+    }
+}

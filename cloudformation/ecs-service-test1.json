@@ -1,0 +1,39 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "ECS Service test1",
+    "Parameters": {
+        "VPCSecurityGroupId": {
+            "Type": "String"
+        },
+        "VPCSubnetId": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "ECSTestService1": {
+            "Type": "AWS::ECS::Service",
+            "Properties": {
+                "Cluster": "ecs-cluster-ai-ml",
+                "ServiceName": "Test1Service",
+                "TaskDefinition": "ecs-test1-family:1",
+                "DesiredCount": 1,
+                "LaunchType": "FARGATE",
+                "NetworkConfiguration": {
+                    "AwsvpcConfiguration": {
+                        "AssignPublicIp": "DISABLED",
+                        "SecurityGroups": [
+                            {
+                                "Ref": "VPCSecurityGroupId"
+                            }
+                        ],
+                        "Subnets": [
+                            {
+                                "Ref": "VPCSubnetId"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
